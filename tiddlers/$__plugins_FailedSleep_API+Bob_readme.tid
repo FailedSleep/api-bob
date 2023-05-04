@@ -1,5 +1,5 @@
 created: 20230502210111971
-modified: 20230504195007600
+modified: 20230504201339821
 tags: API+Bob
 title: $:/plugins/FailedSleep/API+Bob/readme
 
@@ -24,7 +24,7 @@ http://localhost/api/code/js/RootWiki?test-code
 * ''/api/code/js/''{wiki}?{tiddler}
 * ''/api/code/sh/''{wiki}?{tiddler}
 
-Homepage: [[GitHub|https://github.com/FailedSleep/api-bob]]
+Homepage: https://failedsleep.github.io/api-bob/
 
 Made by [[Failed Sleep|https://github.com/FailedSleep]] - 
  {{$:/core/images/github}} [[@FailedSleep|https://github.com/FailedSleep]],
