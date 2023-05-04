@@ -1,0 +1,14 @@
+created: 20230502203547911
+modified: 20230502203549808
+title: plugins
+
+\define plugin-table(type)
+\whitespace trim
+<$set name="plugin-type" value="""$type$""">
+<$set name="qualified-state" value=<<qualify "$:/state/plugin-info">>>
+<$list filter="[!has[draft.of]plugin-type[$type$]sort[name]]" emptyMessage=<<lingo "Empty/Hint">> template="$:/core/ui/Components/plugin-info"/>
+</$set>
+</$set>
+\end
+
+<$macrocall $name="tabs" tabsList="[all[tiddlers+shadows]tag[$:/tags/ControlPanel/Plugins]!has[draft.of]]" default="$:/core/ui/ControlPanel/Plugins/Installed/Plugins" explicitState="$:/state/tab--86143343"/>

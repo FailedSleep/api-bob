@@ -1,0 +1,31 @@
+created: 20230502210111971
+modified: 20230504195007600
+tags: API+Bob
+title: $:/plugins/FailedSleep/API+Bob/readme
+
+This plugin contains Additional API calls for TW5 Bob, comprising:
+
+!!! Examples
+```
+http://localhost/api/raw/RootWiki?test-code
+```
+```
+http://localhost/api/code/bash/RootWiki?test-code
+```
+```
+http://localhost/api/code/js/RootWiki?test-code
+```
+
+* ''/api/raw/''{wiki}?{tiddler}
+* ''/api/code/''{wiki}?{tiddler}
+* ''/api/code/bash/''{wiki}?{tiddler}
+* ''/api/code/css/''{wiki}?{tiddler}
+* ''/api/code/html/''{wiki}?{tiddler}
+* ''/api/code/js/''{wiki}?{tiddler}
+* ''/api/code/sh/''{wiki}?{tiddler}
+
+Homepage: [[GitHub|https://github.com/FailedSleep/api-bob]]
+
+Made by [[Failed Sleep|https://github.com/FailedSleep]] - 
+ {{$:/core/images/github}} [[@FailedSleep|https://github.com/FailedSleep]],
+ {{$:/core/images/twitter}} [[@FailedSleep|https://twitter.com/FailedSleep]]

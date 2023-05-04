@@ -1,0 +1,30 @@
+created: 20230502224041328
+modified: 20230504194256760
+tags: API+Bob
+title: $:/plugins/FailedSleep/API+Bob/.build
+
+Plugin: [[$:/plugins/FailedSleep/API+Bob]]
+Readme: [[$:/plugins/FailedSleep/API+Bob/readme]]
+Build: [[$:/plugins/FailedSleep/API+Bob/build]]
+
+
+!!! Pack the plugin
+```js
+$tw.utils.repackPlugin("$:/plugins/FailedSleep/API+Bob",[
+"$:/plugins/FailedSleep/API+Bob/.js",
+"$:/plugins/FailedSleep/API+Bob/.build",
+"$:/plugins/FailedSleep/API+Bob/readme",
+"$:/plugins/FailedSleep/API+Bob/api-code-bash.js",
+"$:/plugins/FailedSleep/API+Bob/api-code-css.js",
+"$:/plugins/FailedSleep/API+Bob/api-code-html.js",
+"$:/plugins/FailedSleep/API+Bob/api-code-js.js",
+"$:/plugins/FailedSleep/API+Bob/api-code-sh.js",
+"$:/plugins/FailedSleep/API+Bob/api-code.js",
+"$:/plugins/FailedSleep/API+Bob/api-raw.js"
+])
+```
+
+!!! Repack the plugin
+```js
+$tw.utils.repackPlugin("$:/plugins/FailedSleep/API+Bob")
+```

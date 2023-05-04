@@ -1,0 +1,90 @@
+{
+    "tiddlers": {
+        "$:/plugins/FailedSleep/API+Bob/.js": {
+            "created": "20230502161752267",
+            "modified": "20230504173021051",
+            "module-type": "startup",
+            "tags": "API+Bob",
+            "text": "(function () {\n\n/*jslint node: true, browser: true */\n/*global $tw: false */\n\"use strict\";\n\nif (!$tw.$failedsleep) $tw.$failedsleep={};\n\nconst getCode = (text='', codeType='```', r='', lines = text.split('\\n'), append=false ) => {\n  while (lines.length){\n    let line = lines.shift();\n    if (line.substr(0,3)==='```'){\n      append = (line.substr(0,codeType.length)===codeType);\n      while (lines.length && lines[0].substr(0,3)!=='```'){\n        if (append) r += lines[0] + '\\n';\n        lines.shift();\n      }\n      lines.shift();\n    }\n  }\n  return r;\n};\n\n$tw.$failedsleep.bobServerRoute = (request,response, codeType='',mime='text/text') => {\n\tif($tw.settings.API.enableFetch !== 'yes') return response.writeHead(403).end('API Fetch not enabled');\n\n\tconst URL = require('url');\n\tconst parsed = URL.parse(request.url);\n\tconst wikiName = request.params[0];\n\tconst tiddlerTitle = decodeURIComponent(parsed.query);\n\n\tif(typeof parsed.query !== 'string') return response.writeHead(403).end();\n\n\tconst token = $tw.Bob.getCookie(request.headers.cookie, 'token');\n\n\t// make sure that the wiki exists\n\tconst exists = $tw.ServerSide.existsListed(wikiName);\n\tconst authorised = $tw.Bob.AccessCheck(wikiName, token, 'view', 'wiki');\n\n\tif(!exists || !authorised) return response.writeHead(403).end();\n\n\t$tw.ServerSide.loadWiki(wikiName);\n\tconst tiddler = $tw.Bob.Wikis[wikiName].wiki.getTiddler(tiddlerTitle);\n\n\tif(!tiddler) return response.writeHead(403).end(\"No Tiddler\");\n\n\tlet text = tiddler.getFieldString(\"text\");\n\n\tif (codeType!=='') text = getCode(text,codeType);\n\n\tresponse.writeHead(200, {\"Content-Type\": mime});\n\tresponse.end(text,\"utf8\");\n};\n\n\nexports.name = \"failedsleep-test\"; exports.after = [\"rootwidget\"];\nexports.startup = function () { return $tw.$failedsleep; }\n\n})();\n\n\n\n\n\n\n",
+            "title": "$:/plugins/FailedSleep/API+Bob/.js",
+            "type": "application/javascript"
+        },
+        "$:/plugins/FailedSleep/API+Bob/.build": {
+            "created": "20230502224041328",
+            "modified": "20230504173004707",
+            "tags": "API+Bob",
+            "text": "Plugin: [[$:/plugins/FailedSleep/API+Bob]]\nReadme: [[$:/plugins/FailedSleep/API+Bob/readme]]\nBuild: [[$:/plugins/FailedSleep/API+Bob/build]]\n\n\n!!! Pack the plugin\n```js\n$tw.utils.repackPlugin(\"$:/plugins/FailedSleep/API+Bob\",[\n\"$:/plugins/FailedSleep/API+Bob/.js\",\n\"$:/plugins/FailedSleep/API+Bob/.build\",\n\"$:/plugins/FailedSleep/API+Bob/readme\",\n\"$:/plugins/FailedSleep/API+Bob/api-code-bash.js\",\n\"$:/plugins/FailedSleep/API+Bob/api-code-css.js\",\n\"$:/plugins/FailedSleep/API+Bob/api-code-html.js\",\n\"$:/plugins/FailedSleep/API+Bob/api-code-js.js\",\n\"$:/plugins/FailedSleep/API+Bob/api-code-sh.js\",\n\"$:/plugins/FailedSleep/API+Bob/api-code.js\",\n\"$:/plugins/FailedSleep/API+Bob/api-raw.js\"\n])\n```\n\n!!! Repack the plugin\n```js\n$tw.utils.repackPlugin(\"$:/plugins/FailedSleep/API+Bob\")\n```",
+            "title": "$:/plugins/FailedSleep/API+Bob/.build"
+        },
+        "$:/plugins/FailedSleep/API+Bob/readme": {
+            "created": "20230502210111971",
+            "modified": "20230504190040019",
+            "tags": "API+Bob",
+            "text": "This plugin contains Additional API calls for TW5 Bob, comprising:\n\n!!! Examples\n```\nhttp://localhost/api/raw/RootWiki?test-code\n```\n```\nhttp://localhost/api/code/bash/RootWiki?test-code\n```\n```\nhttp://localhost/api/code/js/RootWiki?test-code\n```\n\n* ''/api/raw/''{wiki}?{tiddler}\n* ''/api/code/''{wiki}?{tiddler}\n* ''/api/code/bash/''{wiki}?{tiddler}\n* ''/api/code/css/''{wiki}?{tiddler}\n* ''/api/code/html/''{wiki}?{tiddler}\n* ''/api/code/js/''{wiki}?{tiddler}\n* ''/api/code/sh/''{wiki}?{tiddler}\n\nHomepage: [[GitHub|https://github.com/FailedSleep]]\n\nMade by [[Failed Sleep|https://github.com/FailedSleep]] - \n {{$:/core/images/github}} [[@FailedSleep|https://github.com/FailedSleep]],\n {{$:/core/images/twitter}} [[@FailedSleep|https://twitter.com/FailedSleep]]",
+            "title": "$:/plugins/FailedSleep/API+Bob/readme"
+        },
+        "$:/plugins/FailedSleep/API+Bob/api-code-bash.js": {
+            "created": "20230502144414169",
+            "modified": "20230504173331926",
+            "module-type": "serverroute",
+            "tags": "API+Bob",
+            "text": "/*\\\ntitle: $:/plugins/FailedSleep/API+Bob/api-code-bash.js\ntype: application/javascript\nmodule-type: serverroute\n\nlocalhost:8080/api/code/bash/RootWiki?test-code\n\nreturns tiddler code, filtered by type\n\\*/\n(function() {\n/*jslint node: true, browser: true */\n/*global $tw: false */\n\"use strict\";\n\nconst codeType = '```bash';\nconst mimeType = 'text/x-shellscript';\n\nexports.method = \"GET\";\nexports.path = /^\\/api\\/code\\/bash\\/(.+?)\\/?$/;\nexports.handler = function(request,response,state) { \n  $tw.$failedsleep.bobServerRoute(request,response,codeType, mimeType); };\n\n}());",
+            "title": "$:/plugins/FailedSleep/API+Bob/api-code-bash.js",
+            "type": "application/javascript"
+        },
+        "$:/plugins/FailedSleep/API+Bob/api-code-css.js": {
+            "created": "20230502154927360",
+            "modified": "20230504173519540",
+            "module-type": "serverroute",
+            "tags": "API+Bob",
+            "text": "/*\\\ntitle: $:/plugins/FailedSleep/API+Bob/api-code-css.js\ntype: application/javascript\nmodule-type: serverroute\n\nlocalhost:8080/api/code/css/RootWiki?test-code\n\nreturns tiddler code, filtered by type\n\\*/\n(function() {\n/*jslint node: true, browser: true */\n/*global $tw: false */\n\"use strict\";\n\nconst codeType = '```css';\nconst mimeType = 'text/css';\nexports.path = /^\\/api\\/code\\/css\\/(.+?)\\/?$/;\n\nexports.method = \"GET\";\nexports.handler = function(request,response,state) { \n  $tw.$failedsleep.bobServerRoute(request,response,codeType, mimeType); };\n\n}());",
+            "title": "$:/plugins/FailedSleep/API+Bob/api-code-css.js",
+            "type": "application/javascript"
+        },
+        "$:/plugins/FailedSleep/API+Bob/api-code-html.js": {
+            "created": "20230502154957670",
+            "modified": "20230504173554464",
+            "module-type": "serverroute",
+            "tags": "API+Bob",
+            "text": "/*\\\ntitle: $:/plugins/FailedSleep/API+Bob/api-code-html.js\ntype: application/javascript\nmodule-type: serverroute\n\nlocalhost:8080/api/code/html/RootWiki?test-code\n\nreturns tiddler code, filtered by type\n\\*/\n(function() {\n/*jslint node: true, browser: true */\n/*global $tw: false */\n\"use strict\";\n\nconst codeType = '```html';\nconst mimeType = 'text/html';\nexports.path = /^\\/api\\/code\\/html\\/(.+?)\\/?$/;\n\nexports.method = \"GET\";\nexports.handler = function(request,response,state) { \n  $tw.$failedsleep.bobServerRoute(request,response,codeType, mimeType); };\n\n}());",
+            "title": "$:/plugins/FailedSleep/API+Bob/api-code-html.js",
+            "type": "application/javascript"
+        },
+        "$:/plugins/FailedSleep/API+Bob/api-code-js.js": {
+            "created": "20230502152047711",
+            "modified": "20230504173801108",
+            "module-type": "serverroute",
+            "tags": "API+Bob",
+            "text": "/*\\\ntitle: $:/plugins/FailedSleep/API+Bob/api-code-js.js\ntype: application/javascript\nmodule-type: serverroute\n\nlocalhost:8080/api/code/js/RootWiki?test-code\n\nreturns tiddler code, filtered by type\n\\*/\n(function() {\n/*jslint node: true, browser: true */\n/*global $tw: false */\n\"use strict\";\n\nconst codeType = '```js';\nconst mimeType = 'text/javascript';\nexports.path = /^\\/api\\/code\\/js\\/(.+?)\\/?$/;\n\nexports.method = \"GET\";\nexports.handler = function(request,response,state) { \n  $tw.$failedsleep.bobServerRoute(request,response,codeType, mimeType); };\n\n}());",
+            "title": "$:/plugins/FailedSleep/API+Bob/api-code-js.js",
+            "type": "application/javascript"
+        },
+        "$:/plugins/FailedSleep/API+Bob/api-code-sh.js": {
+            "created": "20230502151904630",
+            "modified": "20230504173729205",
+            "module-type": "serverroute",
+            "tags": "API+Bob",
+            "text": "/*\\\ntitle: $:/plugins/FailedSleep/API+Bob/api-code-sh.js\ntype: application/javascript\nmodule-type: serverroute\n\nlocalhost:8080/api/code/sh/RootWiki?test-code\n\nreturns tiddler code, filtered by type\n\\*/\n(function() {\n/*jslint node: true, browser: true */\n/*global $tw: false */\n\"use strict\";\n\nconst codeType = '```sh';\nconst mimeType = 'text/x-shellscript';\nexports.path = /^\\/api\\/code\\/sh\\/(.+?)\\/?$/;\n\nexports.method = \"GET\";\nexports.handler = function(request,response,state) { \n  $tw.$failedsleep.bobServerRoute(request,response,codeType, mimeType); };\n\n}());",
+            "title": "$:/plugins/FailedSleep/API+Bob/api-code-sh.js",
+            "type": "application/javascript"
+        },
+        "$:/plugins/FailedSleep/API+Bob/api-code.js": {
+            "created": "20230502132535050",
+            "modified": "20230504173924649",
+            "module-type": "serverroute",
+            "tags": "API+Bob",
+            "text": "/*\\\ntitle: $:/plugins/FailedSleep/API+Bob/api-code.js\ntype: application/javascript\nmodule-type: serverroute\n\nlocalhost:8080/api/code/RootWiki?test-code\n\nreturns tiddler code, filtered by type\n\\*/\n(function() {\n/*jslint node: true, browser: true */\n/*global $tw: false */\n\"use strict\";\n\nconst codeType = '```';\nconst mimeType = 'text/x-shellscript';\nexports.path = /^\\/api\\/code\\/(.+?)\\/?$/;\n\nexports.method = \"GET\";\nexports.handler = function(request,response,state) { \n  $tw.$failedsleep.bobServerRoute(request,response,codeType, mimeType); };\n\n}());",
+            "title": "$:/plugins/FailedSleep/API+Bob/api-code.js",
+            "type": "application/javascript"
+        },
+        "$:/plugins/FailedSleep/API+Bob/api-raw.js": {
+            "created": "20230502122621409",
+            "modified": "20230504174047072",
+            "module-type": "serverroute",
+            "tags": "API+Bob",
+            "text": "/*\\\ntitle: $:/plugins/FailedSleep/API+Bob/api-raw.js\ntype: application/javascript\nmodule-type: serverroute\n\nlocalhost:8080/api/raw/RootWiki?test-code\n\nreturns tiddler text\n\\*/\n(function() {\n/*jslint node: true, browser: true */\n/*global $tw: false */\n\"use strict\";\n\nexports.method = \"GET\";\n\nexports.path = /^\\/api\\/raw\\/(.+?)\\/?$/;\n\nexports.handler = function(request,response,state) { $tw.$failedsleep.bobServerRoute(request,response); };\n\n}());",
+            "title": "$:/plugins/FailedSleep/API+Bob/api-raw.js",
+            "type": "application/javascript"
+        }
+    }
+}

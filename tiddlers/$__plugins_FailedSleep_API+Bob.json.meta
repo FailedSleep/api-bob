@@ -1,0 +1,11 @@
+author: Failed Sleep
+created: 20230502204148739
+dependents: 
+description: Additional API calls for TW5 Bob
+list: readme
+modified: 20230504191451984
+plugin-type: plugin
+tags: API+Bob
+title: $:/plugins/FailedSleep/API+Bob
+type: application/json
+version: 0.0.1

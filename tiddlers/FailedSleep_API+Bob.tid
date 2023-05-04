@@ -1,0 +1,26 @@
+created: 20230504182624114
+modified: 20230504195017295
+title: FailedSleep/API+Bob
+
+|!Version |23.05.04.1|
+|!Published |<$view field="modified" format="date" template="MMM DDth, YYYY" />|
+|!GitHub |https://github.com/FailedSleep/api-bob|
+
+! API+Bob
+
+This plugin adds additional API calls for [[TW5-Bob|https://github.com/OokTech/TW5-Bob]].
+
+!! Added API calls
+* ''/api/raw/''{wiki}?{tiddler}
+* ''/api/code/''{wiki}?{tiddler}
+* ''/api/code/bash/''{wiki}?{tiddler}
+* ''/api/code/css/''{wiki}?{tiddler}
+* ''/api/code/html/''{wiki}?{tiddler}
+* ''/api/code/js/''{wiki}?{tiddler}
+* ''/api/code/sh/''{wiki}?{tiddler}
+
+---
+
+* [[Installation]] / [[Update]]
+* [[Update]]
+* [[Recommended plugins]]
